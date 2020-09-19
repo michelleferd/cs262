@@ -1,46 +1,50 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, FlatList } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  FlatList,
+} from "react-native";
 
 export default function App() {
-  const[age,setAge] = useState(0);
-  const[name,setName] = useState('John');
-  const [birthday, setBirthday] = useState(
-    [ 
-      {birthday: 'October 1', key : '1'},
-      {birthday: 'February 21', key: '2'}
-  );
+  const [name, setName] = useState("Ryan");
+  const [age, setAge] = useState(0);
+  const [birthdays, setBirthdays] = useState([]);
+
+  const inputChange = (val) => {
+    setName(val);
+  };
+
+  const buttonPress = () => {
+    setAge(age + 1);
+    setBirthdays(birthdays.concat({ key: (age + 1).toString() }));
+  };
+
   return (
     <View style={styles.container}>
-    <FlatList
-      numColumns = {2}
-      keyExtractor={(item) => item.id}
-      data={birthdays}  
-      const Item = {{ birthdays}} => (
-      renderItem=({ item})) => (
-      <Text style={styles.item}> {item.name } </Text>
-      );
-  const clickHandler = () => {
-    let newAge = age + 1;
-    setAge(newAge)
-    setBirthday(
-      birthdays.concat({key: newAge.toString() })
-    );
-  };
-  
-  return
-      <View style={styles.container}>
-      <Text>Enter name:</Text>
-      <TextInput 
-        style={styles.input} 
-        placeholder = 'e.g. John Doe'
-        onChangeText(val) => setName(val)} />
-      <Text></Text>
-        <Button title = 'Birthday' onPress = {clickHandler} />
-        </View>
-        <Text> {name} is 4 years old</Text?
-        <View style={styles.buttonContainer}>
-      
+      <Text alignItems="center">Enter name:</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Input Name:"
+        onChangeText={inputChange}
+      />
+      <Text style={styles.textOuput}>
+        My name is {name} and I am {age} years old.
+      </Text>
+
+      <View styles={styles.buttonContainer}>
+        <Button title="BIRTHDAY" onPress={buttonPress} />
+      </View>
+
+      <FlatList
+        data={birthdays}
+        renderItem={({ item }) => <Text>{item.key}</Text>}
+      />
+
+      <StatusBar style="auto" />
     </View>
   );
 }
@@ -48,27 +52,29 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: 40,
-    paddingHorizontal: 20
-    //alignItems: 'center',
-    //justifyContent: 'center',
-    
-  },
-  buttonContainer: {
-    marginTop:20
-    borderWidth: 1,
-    borderColor: '#777',
-    padding: 8,
-    margin: 10,
-    width: 200,
-  },
-  item: {
-    marginTop: 24,
+    backgroundColor: "#fff",
+    alignItems: "center",
     padding: 30,
-    backgroundColor: 'pink',
-    fontSize : 24
-    marginHorizontal: 10,
-    marginTop: 24,
-  }
+    textAlignVertical: "top",
+  },
+
+  textInput: {
+    width: 135,
+    height: 35,
+    borderWidth: 2,
+    borderColor: "black",
+    margin: 8,
+    paddingLeft: 2,
+  },
+
+  textOuput: {
+    textAlign: "center",
+  },
+
+  buttonContainer: {
+    backgroundColor: "blue",
+    borderColor: "black",
+    borderWidth: 2,
+    color: "black",
+  },
 });
