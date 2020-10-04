@@ -15,7 +15,7 @@ export default function HomeStack( {navigation} ) {
                 name="GameZone"
                 component={Home}
                 options={{
-                    headerLeft: () =>  <Header navigation={navigation} />
+                    headerLeft: () =>  <Header navigation={navigation} title='GameZone'/>
                 }}
             />
             <Stack.Screen
