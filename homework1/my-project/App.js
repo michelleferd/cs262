@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, FlatList, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Header from './components/header';
-import TodoItem from './components/todoItem';
+import TodoItem from './components/TodoItem';
 import AddTodo from './components/addTodo';
-
+/**
+ * Default function for the App
+ */
 export default function App() {
-  const [todos, setTodos] = useState([
+  const [Todos, setTodos] = useState([
   {text: 'fireworks', key: '1'},
   {text: 'pirates', key: '2'},
   {text: 'ship', key: '3'},
@@ -53,6 +55,8 @@ export default function App() {
     </TouchableWithoutFeedback>
   );
 }
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
