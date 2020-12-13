@@ -1,22 +1,21 @@
---
+﻿--
 -- This SQL script builds a monopoly database, deleting any pre-existing version.
 --
--- @author kvlinden
--- @version Summer, 2015
+-- @authors kvlinden, chv5
+-- @version Fall, 2020
 --
 
 -- Drop previous versions of the tables if they they exist, in reverse order of foreign keys.
 DROP TABLE IF EXISTS PlayerGame;
-DROP TABLE IF EXISTS Game;
-DROP TABLE IF EXISTS Player;
-DROP TABLE IF EXISTS Property;
-DROP TABLE IF EXISTS House;
-DROP TABLE IF EXISTS Hotel;
+DROP TABLE IF EXISTS Player CASCADE;
+DROP TABLE IF EXISTS PGProp;
+DROP TABLE IF EXISTS Game CASCADE;
 
 -- Create the schema.
 CREATE TABLE Game (
 	ID integer PRIMARY KEY, 
-	time timestamp
+	time timestamp,
+	finished integer NOT NULL
 	);
 
 CREATE TABLE Player (
@@ -28,57 +27,57 @@ CREATE TABLE Player (
 CREATE TABLE PlayerGame (
 	gameID integer REFERENCES Game(ID), 
 	playerID integer REFERENCES Player(ID),
-	score integer
-	);
-	
-CREATE TABLE Hotel (
-	ID integer PRIMARY KEY
+	score integer,
+	cash integer,
+	space integer
 	);
 
-CREATE TABLE House (
-	ID integer PRIMARY KEY
+--Table keeps track of players' properties
+CREATE TABLE PGProp (
+	--House or Hotel
+	propType varchar(5) NOT NULL,
+	propName varchar(10) NOT NULL,
+	playerID integer,
+	gameID integer,
+	FOREIGN KEY (playerID) REFERENCES Player(ID),
+	FOREIGN KEY (gameID) REFERENCES Game(ID)
 	);
 
-CREATE TABLE Property (
-	ID integer PRIMARY KEY,
-	name varchar(50),
-	houseID integer REFERENCES House(ID),
-	hotelID integer REFERENCES Hotel(ID)
-	);
 
 -- Allow users to select data from the tables.
 GRANT SELECT ON Game TO PUBLIC;
 GRANT SELECT ON Player TO PUBLIC;
 GRANT SELECT ON PlayerGame TO PUBLIC;
-GRANT SELECT ON Property TO PUBLIC;
-GRANT SELECT ON Hotel TO PUBLIC;
-GRANT SELECT ON House TO PUBLIC;
+GRANT SELECT ON PGProp TO PUBLIC;
 
 -- Add sample records.
-INSERT INTO Game VALUES (1, '2006-06-27 08:00:00');
-INSERT INTO Game VALUES (2, '2006-06-28 13:20:00');
-INSERT INTO Game VALUES (3, '2006-06-29 18:41:00');
-
-INSERT INTO Game VALUES (4, '2006-06-29 19:43:00');
+INSERT INTO Game VALUES (1, '2006-06-27 08:00:00', 0);
+INSERT INTO Game VALUES (2, '2006-06-28 13:20:00', 0);
+INSERT INTO Game VALUES (3, '2006-06-29 18:41:00', 1);
 
 INSERT INTO Player(ID, emailAddress) VALUES (1, 'me@calvin.edu');
 INSERT INTO Player VALUES (2, 'king@gmail.edu', 'The King');
 INSERT INTO Player VALUES (3, 'dog@gmail.edu', 'Dogbreath');
-INSERT INTO Player VALUES (4, 'mef25@students.calvin.edu', 'Michelle Ferdinands');
 
-INSERT INTO PlayerGame VALUES (1, 1, 0.00);
-INSERT INTO PlayerGame VALUES (1, 2, 0.00);
-INSERT INTO PlayerGame VALUES (1, 3, 2350.00);
-INSERT INTO PlayerGame VALUES (2, 1, 1000.00);
-INSERT INTO PlayerGame VALUES (2, 2, 0.00);
-INSERT INTO PlayerGame VALUES (2, 3, 500.00);
-INSERT INTO PlayerGame VALUES (3, 2, 0.00);
-INSERT INTO PlayerGame VALUES (3, 3, 5500.00);
+--PGProp (Type, Name, GameID, PlayerID)
+INSERT INTO PGProp VALUES ('House', 'Wall St.', 1, 1);
+INSERT INTO PGProp VALUES ('Hotel', 'La Septima', 1, 2);
+INSERT INTO PGProp VALUES ('Hotel', 'Maralago', 1, 3);
+INSERT INTO PGProp VALUES ('Hotel', 'Bahamas', 2, 1);
+INSERT INTO PGProp VALUES ('House', 'Beale St.', 2, 2);
+INSERT INTO PGProp VALUES ('Hotel', 'Shangrala', 2, 3);
+INSERT INTO PGProp VALUES ('House', 'Burton St.', 3, 2);
+INSERT INTO PGProp VALUES ('House', 'Maple St.', 3, 3);
+INSERT INTO PGProp VALUES ('House', 'Oak St.', 3, 2);
+INSERT INTO PGProp VALUES ('Hotel', 'Merlot', 2, 2);
 
+--PlayerGame (gameID, playerID, score, cash, space)
+INSERT INTO PlayerGame VALUES (1, 1, 100, 	0.00, 	 12);
+INSERT INTO PlayerGame VALUES (1, 2, 200, 	0.00, 	 11);
+INSERT INTO PlayerGame VALUES (1, 3, 10000, 2350.00, 33);
+INSERT INTO PlayerGame VALUES (2, 1, 12000, 1000.00, 32);
+INSERT INTO PlayerGame VALUES (2, 2, 22000, 0.00, 	 30);
+INSERT INTO PlayerGame VALUES (2, 3, 20, 	500.00,  2);
+INSERT INTO PlayerGame VALUES (3, 2, 40, 	0.00, 	 4);
+INSERT INTO PlayerGame VALUES (3, 3, 50, 	5500.00, 7);
 
-INSERT INTO PlayerGame VALUES (4, 1, 0.00);
-
-
-INSERT INTO Property VALUES (1, 'Michigan');
-INSERT INTO Property VALUES (2, 'India');
-INSERT INTO Property VALUES (3, 'Pennsylvania');
